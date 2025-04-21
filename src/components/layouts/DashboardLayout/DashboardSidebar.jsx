@@ -10,7 +10,8 @@ import {
   LogOut,
   X,
   User,
-  ShieldCheck
+  ShieldCheck,
+  Grid
 } from 'lucide-react';
 
 const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
@@ -54,6 +55,12 @@ const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) =>
           path: '/users', 
           name: 'Users', 
           icon: <Users className="w-5 h-5" />, 
+          adminOnly: true 
+        },
+        { 
+          path: 'category-management', 
+          name: 'category management', 
+          icon: <Grid className="w-5 h-5" />, 
           adminOnly: true 
         },
         { 

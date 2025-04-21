@@ -28,8 +28,8 @@ const routes = [
       { index: true, element: <Home /> },
       { path: 'home', element: <Home /> },
       { path: 'courses', element: <CoursesAndCategory /> },
-      { path: 'achievement', element: <CustomerTestimonials /> },
-      { path: 'testimonial', element: <OurAchivements /> },
+      { path: 'achievement', element: <OurAchivements />},
+      { path: 'testimonial', element: <CustomerTestimonials />},
     ],
   },
 
@@ -54,7 +54,7 @@ const routes = [
     ,
     children: [
       { index: true, element: <HomeDashboard /> },
-      { path: 'management-category', element: 
+      { path: 'category-management', element: 
         <AdminRoute>
 
       <ManagementCategory /> 

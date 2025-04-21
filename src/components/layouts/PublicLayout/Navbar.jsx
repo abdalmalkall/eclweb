@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -28,14 +28,15 @@ export default function Navbar() {
   return (
     <div className="w-full">
       {/* Top info bar */}
-      <div className="w-full bg-white py-2 border-b border-black-200">
+      <div className="w-full bg-white py-2 border-b border-black-200 hidden sm:flex">
         <div className="container mx-auto px-4 flex flex-col sm:flex-row justify-between items-center text-sm">
-          <div className="flex items-center mb-2 sm:mb-0">
+          <div className="hidden sm:flex items-center mb-2 sm:mb-0">
             <span className="text-gray-700">Phone Number: 956 742 455 678</span>
             <span className="mx-2 hidden sm:block text-gray-300">|</span>
-            <span className="text-gray-700 hidden sm:block">Email:info@ddsgnr.com</span>
+            <span className="text-gray-700 hidden sm:block">Email: info@ddsgnr.com</span>
           </div>
-          <div className="flex space-x-4">
+
+          <div className="flex space-x-4 hidden sm:flex">
             <a href="#" className="text-gray-700 hover:text-gray-900">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
@@ -65,7 +66,7 @@ export default function Navbar() {
       <div className="bg-white shadow-sm">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center py-4">
-            {/* Logo */}
+            {/* Logo section (left side) */}
             <div className="flex items-center">
               <img
                 src="/src/assets/images/DdsgnrLibrary.png"
@@ -74,38 +75,40 @@ export default function Navbar() {
               />
             </div>
 
-            {/* Desktop Navigation Links */}
-            <div className="hidden md:flex space-x-8">
-              {navLinks.map((link, index) => (
+            {/* Navigation and buttons section (right side) */}
+            <div className="hidden md:flex items-center">
+              {/* Navigation Links */}
+              <div className="flex space-x-6 mr-8">
+                {navLinks.map((link, index) => (
+                  <Link
+                    key={index}
+                    to={link.href}
+                    className={`text-gray-700 hover:text-gray-900 pb-1 ml-4 ${isActive(link.href)
+                        ? 'border-b-2 border-black-500 font-medium'
+                        : ''
+                      }`}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Login and Sign Up Buttons */}
+              <div className="flex items-center space-x-3">
                 <Link
-                  key={index}
-                  to={link.href}
-                  className={`text-gray-700 hover:text-gray-900 pb-1 ${
-                    isActive(link.href) 
-                      ? 'border-b-2 border-black-500 font-medium' 
-                      : ''
-                  }`}
+                  to="/login"
+                  className="text-gray-700 hover:text-gray-900 border border-gray-300 rounded-md py-2 px-4"
                 >
-                  {link.name}
+                  Login
                 </Link>
-              ))}
-            </div>
 
-            {/* Login and Sign Up Buttons */}
-            <div className="hidden md:flex items-center space-x-4">
-              <Link
-                to="/login"
-                className="text-gray-700 hover:text-gray-900 border border-gray-300 rounded-md py-2 px-4"
-              >
-                Login
-              </Link>
-
-              <Link
-                to="/signup"
-                className="bg-black text-white rounded-md py-2 px-4 hover:bg-gray-800"
-              >
-                Sign Up
-              </Link>
+                <Link
+                  to="/signup"
+                  className="bg-black text-white rounded-md py-2 px-4 hover:bg-gray-800"
+                >
+                  Sign Up
+                </Link>
+              </div>
             </div>
 
             {/* Mobile menu button */}
@@ -127,24 +130,23 @@ export default function Navbar() {
                   <Link
                     key={index}
                     to={link.href}
-                    className={`text-gray-700 hover:text-gray-900 py-1 ${
-                      isActive(link.href) 
-                        ? 'border-l-4 border-teal-500 text-teal-500 font-medium pl-2' 
+                    className={`text-gray-700 hover:text-gray-900 py-1 ${isActive(link.href)
+                        ? 'border-l-4 border-teal-500 text-teal-500 font-medium pl-2'
                         : 'pl-3'
-                    }`}
+                      }`}
                   >
                     {link.name}
                   </Link>
                 ))}
 
                 <div className="flex flex-col space-y-3 pt-3 border-t border-gray-200">
-                  <Link 
+                  <Link
                     to="/login"
                     className="text-gray-700 hover:text-gray-900 border border-gray-300 rounded-md py-2 px-4 text-center"
                   >
                     Login
                   </Link>
-                  <Link 
+                  <Link
                     to="/signup"
                     className="bg-black text-white rounded-md py-2 px-4 hover:bg-gray-800 text-center"
                   >
@@ -155,6 +157,7 @@ export default function Navbar() {
             </div>
           )}
         </div>
+        <div className="w-full bg-white border-b border-gray-200"></div>
       </div>
     </div>
   );
