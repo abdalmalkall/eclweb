@@ -1,0 +1,110 @@
+import React, { useEffect, useState } from 'react';
+import { requestNotificationPermission, onForegroundMessage } from './firebase/firebase';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+function App() {
+  const [notification, setNotification] = useState(null);
+
+  useEffect(() => {
+    // Request notification permission when the component mounts
+    const requestPermission = async () => {
+      await requestNotificationPermission();
+    };
+    
+    requestPermission();
+    
+    // Set up foreground message handler
+    const unsubscribe = onForegroundMessage((payload) => {
+      // Show notification using toast or custom component
+      toast.info(payload.notification.title, {
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      
+      setNotification({
+        title: payload.notification.title,
+        body: payload.notification.body,
+        data: payload.data
+      });
+    });
+    
+    // Clean up subscription when component unmounts
+    return () => {
+      unsubscribe && unsubscribe();
+    };
+  }, []);
+
+  return (
+    <div className="App">
+      {/* Your app content */}
+      
+      {/* Toast container for notifications */}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      
+      {/* Custom notification component */}
+      {notification && (
+        <div className="notification-popup">
+          <h3>{notification.title}</h3>
+          <p>{notification.body}</p>
+          <button onClick={() => setNotification(null)}>Close</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;
+
+----------------------------------------------
+
+// src/components/Notification.js
+import React from 'react';
+import './Notification.css';
+
+const Notification = ({ notification, onClose }) => {
+  if (!notification) return null;
+
+  return (
+    <div className="notification-wrapper">
+      <div className="notification">
+        <div className="notification-header">
+          <h3>{notification.title}</h3>
+          <button className="close-btn" onClick={onClose}>×</button>
+        </div>
+        <div className="notification-body">
+          <p>{notification.body}</p>
+        </div>
+        <div className="notification-actions">
+          <button onClick={() => {
+            // Handle action based on notification data
+            if (notification.data && notification.data.click_action) {
+              window.location.href = `/${notification.data.click_action.toLowerCase()}`;
+            }
+            onClose();
+          }}>
+            View
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Notification;

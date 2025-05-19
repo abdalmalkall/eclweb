@@ -4,6 +4,7 @@ import DashboardSidebar from './DashboardSidebar';
 import { useUserStore } from '@/stores/user.store';
 import { useAuthStore } from '@/stores/auth.store';
 import { Bell, Search, ChevronRight } from 'lucide-react';
+// import NotificationListener from '@/components/NotificationListener';
 
 const DashboardLayout = () => {
     const user = useUserStore((state) => state.user);
@@ -90,6 +91,7 @@ const DashboardLayout = () => {
 
     return (
         <div className="flex h-screen bg-gray-50">
+
             {/* Sidebar */}
             <DashboardSidebar 
                 isOpen={isMobileMenuOpen}
@@ -119,6 +121,7 @@ const DashboardLayout = () => {
                             
                             {/* Sidebar collapse toggle - visible on desktop */}
                             <div className="hidden lg:flex lg:items-center">
+
                                 <button 
                                     onClick={toggleSidebarCollapse}
                                     className="p-1 rounded-md text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mr-3"
@@ -131,6 +134,7 @@ const DashboardLayout = () => {
                             {/* Mobile only title */}
                             <div className="lg:hidden">
                                 <h1 className="text-xl font-bold text-gray-800">{getPageTitle()}</h1>
+
                             </div>
                             
                             {/* Search Bar - Hidden on mobile */}
@@ -150,10 +154,10 @@ const DashboardLayout = () => {
                             {/* Right Navigation */}
                             <div className="flex items-center space-x-4">
                                 {/* Notification Button */}
-                                <button className="p-1 rounded-full text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                {/* <button className="p-1 rounded-full text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"> */}
                                     <span className="sr-only">View notifications</span>
-                                    <Bell className="h-6 w-6" />
-                                </button>
+                                {/* <NotificationListener /> */}
+                                {/* </button> */}
                                 
                                 {/* User Menu Button */}
                                 <div className="relative">

@@ -11,9 +11,12 @@ import {
   X,
   User,
   ShieldCheck,
-  Grid
+  Grid,
+  BookOpenCheck
 } from 'lucide-react';
+// import NotificationListener from '@/components/NotificationListener';
 
+// eslint-disable-next-line no-unused-vars
 const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
   const location = useLocation();
   const user = useUserStore((state) => state.user);
@@ -23,22 +26,33 @@ const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) =>
     logout();
   };
 
-  // Navigation links data structure with categories
   const navLinks = [
     {
       category: "Main",
       links: [
         { 
-          path: '/dashboard', 
+          path: 'dashboard', 
           name: 'Dashboard', 
           icon: <Home className="w-5 h-5" />, 
-          adminOnly: false 
+          roles: ['admin', 'trainer', 'student'] 
         },
         { 
-          path: '/profile', 
+          path: 'profile', 
           name: 'Profile', 
           icon: <User className="w-5 h-5" />, 
-          adminOnly: false 
+          roles: ['admin', 'trainer', 'student'] 
+        },
+        { 
+          path: 'courses-page', 
+          name: 'Trainer courses-page', 
+          icon: <BookOpenCheck className="w-5 h-5" />, 
+          roles: ['trainer'] 
+        },
+        { 
+          path: 'modules-page', 
+          name: 'Trainer modules-page', 
+          icon: <BookOpenCheck className="w-5 h-5" />, 
+          roles: ['trainer'] 
         }
       ]
     },
@@ -46,28 +60,29 @@ const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) =>
       category: "Management",
       links: [
         { 
-          path: '/reports', 
+          path: 'reports', 
           name: 'Reports', 
           icon: <FileText className="w-5 h-5" />, 
-          adminOnly: false 
+          roles: ['admin', 'trainer', 'student'] 
         },
         { 
-          path: '/users', 
+          path: 'users', 
           name: 'Users', 
           icon: <Users className="w-5 h-5" />, 
-          adminOnly: true 
+          roles: ['admin'] 
         },
         { 
-          path: 'category-management', 
-          name: 'category management', 
-          icon: <Grid className="w-5 h-5" />, 
-          adminOnly: true 
+          path: 'pricing-plans', 
+          name: 'Pricing Plans', 
+          icon: <Users className="w-5 h-5" />, 
+          roles: ['admin'] 
         },
+      
         { 
-          path: '/analytics', 
+          path: 'analytics', 
           name: 'Analytics', 
           icon: <BarChart2 className="w-5 h-5" />, 
-          adminOnly: true 
+          roles: ['admin'] 
         }
       ]
     },
@@ -75,10 +90,10 @@ const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) =>
       category: "Preferences",
       links: [
         { 
-          path: '/settings', 
+          path: 'settings', 
           name: 'Settings', 
           icon: <Settings className="w-5 h-5" />, 
-          adminOnly: false 
+          roles: ['admin', 'trainer', 'student'] 
         }
       ]
     }
@@ -87,18 +102,22 @@ const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) =>
   if (!user) {
     return null;
   }
-  
-  // CSS classes based on sidebar state
+
   const sidebarWidth = isCollapsed ? 'w-20' : 'w-64';
   const sidebarClasses = `
     fixed inset-y-0 left-0 z-40 bg-gradient-to-b from-gray-900 to-gray-800 text-white transition-all duration-300 ease-in-out shadow-xl
     ${sidebarWidth}
     ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
   `;
-  
+
+  const renderRoleName = (role) => {
+    if (role === 'admin') return 'Administrator';
+    if (role === 'trainer') return 'Trainer';
+    return 'student';
+  };
+
   return (
     <>
-      {/* Mobile overlay */}
       {isOpen && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
@@ -106,10 +125,8 @@ const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) =>
         ></div>
       )}
 
-      {/* Sidebar */}
       <div className={sidebarClasses}>
         <div className="h-full flex flex-col">
-          {/* App Logo & Close Button */}
           <div className="flex items-center justify-between p-4 border-b border-gray-700">
             {!isCollapsed && (
               <div className="flex items-center">
@@ -124,8 +141,6 @@ const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) =>
                 <span className="font-bold text-white">A</span>
               </div>
             )}
-            
-            {/* Mobile close button */}
             {!isCollapsed && (
               <button 
                 onClick={() => setIsOpen(false)}
@@ -135,8 +150,7 @@ const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) =>
               </button>
             )}
           </div>
-          
-          {/* User Profile Section */}
+
           <div className="p-4 border-b border-gray-700">
             <div className="flex items-center justify-center mb-2">
               <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-xl font-bold shadow-md">
@@ -149,7 +163,7 @@ const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) =>
                 <div className="flex items-center justify-center mt-1 text-sm">
                   <ShieldCheck className="w-4 h-4 text-green-400 mr-1" />
                   <span className="text-gray-300">
-                    {user.role === 'admin' ? 'Administrator' : 'User'}
+                    {renderRoleName(user.role)}
                   </span>
                 </div>
                 {user.isVerified && (
@@ -160,16 +174,13 @@ const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) =>
               </div>
             )}
           </div>
-          
-          {/* Navigation */}
+
           <nav className="flex-1 px-2 py-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
             {navLinks.map((category, categoryIndex) => {
-              // Filter out admin-only links for non-admin users
               const filteredLinks = category.links.filter(link => 
-                !link.adminOnly || user.role === 'admin'
+                link.roles.includes(user.role)
               );
-              
-              // Skip empty categories
+
               if (filteredLinks.length === 0) return null;
               
               return (
@@ -201,11 +212,6 @@ const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) =>
                             {!isCollapsed && (
                               <>
                                 <span className="text-sm">{link.name}</span>
-                                {link.adminOnly && (
-                                  <span className="ml-auto bg-gray-700 text-xs px-1.5 py-0.5 rounded">
-                                    Admin
-                                  </span>
-                                )}
                               </>
                             )}
                           </Link>
@@ -217,8 +223,7 @@ const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) =>
               );
             })}
           </nav>
-          
-          {/* Logout Button */}
+
           <div className="p-4 border-t border-gray-700">
             <button
               onClick={handleLogout}
@@ -232,6 +237,7 @@ const DashboardSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) =>
               {!isCollapsed && <span className="ml-3">Logout</span>}
             </button>
           </div>
+
         </div>
       </div>
     </>

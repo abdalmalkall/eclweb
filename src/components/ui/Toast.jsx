@@ -54,9 +54,8 @@ const Toast = ({ message, type = 'success', duration = 3000, onClose }) => {
     ),
   };
 
-  const classes = `fixed top-4 right-4 flex items-center p-4 mb-4 border rounded-lg shadow transition-opacity ${
-    typeClasses[type]
-  } ${isVisible ? 'opacity-100' : 'opacity-0'}`;
+  const classes = `fixed top-20 right-2 flex items-center p-4 mb-4 border rounded-lg shadow transition-opacity ${typeClasses[type]
+    } ${isVisible ? 'opacity-100' : 'opacity-0'}`;
 
   return (
     <div className={classes} role="alert">

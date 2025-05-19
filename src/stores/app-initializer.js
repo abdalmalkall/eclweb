@@ -3,6 +3,66 @@ import { useAuthStore } from '@/stores/auth.store';
 import { useUserStore } from '@/stores/user.store';
 
 /**
+ * تطبيع بيانات المستخدم
+ * تضمن أن بيانات المستخدم تتبع نفس الهيكل المتوقع في كل مكان
+ */
+export const normalizeUserData = (userData) => {
+    if (!userData) return null;
+    
+    return {
+        id: userData.id || null,
+        name: userData.name || '',
+        email: userData.email || '',
+        role: userData.role || 'user',
+        avatar: userData.avatar || null,
+        isVerified: !!userData.email_verified_at,
+        permissions: Array.isArray(userData.permissions) ? userData.permissions : [],
+        settings: userData.settings || {},
+        createdAt: userData.created_at || null,
+        updatedAt: userData.updated_at || null,
+        // يمكنك إضافة المزيد من الحقول حسب حاجة التطبيق
+    };
+};
+
+/**
+ * تطبيع استجابة تسجيل الدخول
+ * تعيد هيكل موحد لبيانات تسجيل الدخول
+ */
+export const normalizeLoginResponse = (responseData) => {
+    if (!responseData) {
+        return {
+            userData: null,
+            token: null,
+            isSuccess: false
+        };
+    }
+
+    // التعامل مع هياكل الاستجابة المختلفة
+    const userData = responseData.user || (responseData.data && responseData.data.user);
+    const token = responseData.access_token || (responseData.data && responseData.data.access_token);
+
+    return {
+        userData: userData ? normalizeUserData(userData) : null,
+        token: token || null,
+        isSuccess: !!(userData && token)
+    };
+};
+
+/**
+ * تعيين توكن المصادقة
+ * تستخدم بعد تسجيل الدخول بنجاح
+ */
+export const setAuthToken = (token) => {
+    if (token) {
+        localStorage.setItem('authToken', token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else {
+        localStorage.removeItem('authToken');
+        delete axios.defaults.headers.common['Authorization'];
+    }
+};
+
+/**
  * تهيئة التطبيق
  * تستدعى عند بدء تشغيل التطبيق لاستعادة حالة المصادقة وبيانات المستخدم
  */
@@ -21,7 +81,7 @@ export const initializeApp = async () => {
         console.log('تم العثور على توكن المصادقة، جاري التحقق من صحته...');
         
         // تعيين توكن المصادقة في رؤوس الطلبات
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        setAuthToken(token);
         
         // استرجاع بيانات المستخدم
         const userData = await fetchUserData();
@@ -70,62 +130,6 @@ export const fetchUserData = async () => {
         console.error('خطأ أثناء استرجاع بيانات المستخدم:', error);
         throw error;
     }
-};
-
-/**
- * تطبيع بيانات المستخدم
- * تضمن أن بيانات المستخدم تتبع نفس الهيكل المتوقع في كل مكان
- */
-export const normalizeUserData = (userData) => {
-    if (!userData) return null;
-    
-    return {
-        id: userData.id || null,
-        name: userData.name || '',
-        email: userData.email || '',
-        role: userData.role || 'user',
-        avatar: userData.avatar || null,
-        isVerified: !!userData.email_verified_at,
-        permissions: Array.isArray(userData.permissions) ? userData.permissions : [],
-        settings: userData.settings || {},
-        createdAt: userData.created_at || null,
-        updatedAt: userData.updated_at || null,
-        // يمكنك إضافة المزيد من الحقول حسب حاجة التطبيق
-    };
-};
-
-/**
- * تعيين توكن المصادقة
- * تستخدم بعد تسجيل الدخول بنجاح
- */
-export const setAuthToken = (token) => {
-    if (token) {
-        localStorage.setItem('authToken', token);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    } else {
-        localStorage.removeItem('authToken');
-        delete axios.defaults.headers.common['Authorization'];
-    }
-};
-
-/**
- * تطبيع استجابة تسجيل الدخول
- * تعيد هيكل موحد لبيانات تسجيل الدخول
- */
-export const normalizeLoginResponse = (responseData) => {
-    if (!responseData || !responseData.data) {
-        return {
-            userData: null,
-            token: null,
-            isSuccess: false
-        };
-    }
-
-    return {
-        userData: responseData.data.user ? normalizeUserData(responseData.data.user) : null,
-        token: responseData.data.access_token || null,
-        isSuccess: true
-    };
 };
 
 /**
@@ -182,7 +186,7 @@ export const setupAxiosDefaults = () => {
     // إضافة توكن المصادقة إذا كان موجودًا
     const token = localStorage.getItem('authToken');
     if (token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        setAuthToken(token);
     }
     
     // اعتراض الاستجابات للتعامل مع أخطاء المصادقة
