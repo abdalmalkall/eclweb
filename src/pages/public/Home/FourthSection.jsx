@@ -1,7 +1,7 @@
 import React from 'react';
 
 const FirstSection = () => {
-    const FemaleImage = "/src/assets/images/logo.png";
+    const FemaleImage = "/src/assets/images/FemaleImage.png";
 
     return (
         <div className="w-full max-w-[1700px] mx-auto flex flex-col md:flex-row min-h-screen bg-gradient-to-br from-white via-blue-50 to-blue-100 overflow-hidden">
