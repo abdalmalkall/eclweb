@@ -1,19 +1,12 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import './index.css';
-import './styles.css';
-import App from './App.jsx'
-import { NotificationProvider } from '@/contexts/NotificationContext';
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import App from './App';
 
-
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <NotificationProvider>
-
-      <App />
-    </NotificationProvider>
-
-  </StrictMode>,
-)
-serviceWorkerRegistration.register();
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
